@@ -1,5 +1,7 @@
 package org.sweatshop.tgz;
 
+import static java.lang.String.format;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,9 +15,29 @@ import java.util.zip.GZIPInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
-public class TGZ {
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Value;
 
-    public static Optional<InputStream> getInputStream(File tgzFileName, String internalPath) 
+@Value
+@EqualsAndHashCode(callSuper=false)
+public class TgzInputStream extends InputStream {
+    @Getter(AccessLevel.NONE) ByteArrayInputStream bais;
+    
+    public TgzInputStream(File tgzFileName, String internalPath) 
+            throws FileNotFoundException, IOException 
+    {
+        super();
+        Optional<ByteArrayInputStream> ois = getInputStream(tgzFileName, internalPath);
+        if (ois.isPresent()) {
+            bais = ois.get();
+        } else {
+            throw new FileNotFoundException(format("%s within %s does not exist", internalPath, tgzFileName.getAbsolutePath()));
+        }
+    }
+    
+    private static Optional<ByteArrayInputStream> getInputStream(File tgzFileName, String internalPath) 
             throws FileNotFoundException, IOException 
     {
         try (   FileInputStream fis = new FileInputStream(tgzFileName);
@@ -51,13 +73,26 @@ public class TGZ {
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        Optional<InputStream> f = getInputStream(new File("./local/src.tgz"), "src/main/java/org/sweatshop/tgz/TGZ.java");
+        try (TgzInputStream tis = new TgzInputStream(
+                new File("./local/src.tgz")
+                , "src/main/java/org/sweatshop/tgz/TGZ.java")) 
+        {
+    
+            int n = tis.available();
+            byte[] bytes = new byte[n];
+            tis.read(bytes, 0, n);
+            String s = new String(bytes, StandardCharsets.UTF_8);
+            System.out.println(s);
+        }
+    }
 
-        InputStream in = f.get();
-        int n = in.available();
-        byte[] bytes = new byte[n];
-        in.read(bytes, 0, n);
-        String s = new String(bytes, StandardCharsets.UTF_8);
-        System.out.println(s);
+    @Override
+    public int available() {
+        return bais.available();
+    }
+    
+    @Override
+    public int read() throws IOException {
+        return bais.read();
     }
 }
