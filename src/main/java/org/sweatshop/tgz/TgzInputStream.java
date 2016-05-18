@@ -3,11 +3,11 @@ package org.sweatshop.tgz;
 import static java.lang.String.format;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
@@ -24,22 +24,22 @@ import lombok.Value;
 public class TgzInputStream extends InputStream {
     @Getter(AccessLevel.NONE) ByteArrayInputStream bais;
     
-    public TgzInputStream(File tgzFileName, String internalPath) 
+    public TgzInputStream(Path tgzPath, String internalPath) 
             throws FileNotFoundException, IOException 
     {
         super();
-        Optional<ByteArrayInputStream> ois = getInputStream(tgzFileName, internalPath);
+        Optional<ByteArrayInputStream> ois = getInputStream(tgzPath, internalPath);
         if (ois.isPresent()) {
             bais = ois.get();
         } else {
-            throw new FileNotFoundException(format("%s within %s does not exist", internalPath, tgzFileName.getAbsolutePath()));
+            throw new FileNotFoundException(format("%s within %s does not exist", internalPath, tgzPath.toUri()));
         }
     }
     
-    private static Optional<ByteArrayInputStream> getInputStream(File tgzFileName, String internalPath) 
+    private static Optional<ByteArrayInputStream> getInputStream(Path tgzPath, String internalPath) 
             throws FileNotFoundException, IOException 
     {
-        try (   FileInputStream fis = new FileInputStream(tgzFileName);
+        try (   InputStream fis = Files.newInputStream(tgzPath);
                 GZIPInputStream gis = new GZIPInputStream(fis);
                 TarArchiveInputStream tais = new TarArchiveInputStream(gis))
         {

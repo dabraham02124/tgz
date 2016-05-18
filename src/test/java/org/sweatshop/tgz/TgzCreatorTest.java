@@ -2,11 +2,13 @@ package org.sweatshop.tgz;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,17 +18,18 @@ import org.testng.annotations.Test;
 
 public class TgzCreatorTest {
 
-    public static final String tgzFilename = "./target/test-file.tgz";
-    public static final String pathToFiles = "./src/test/resources/dir-to-tgz/";
+    private static final String tgzFilename = "./target/test-file.tgz";
+    private static final String pathToFiles = "./src/test/resources/dir-to-tgz/";
+    private static final Path testFileTgz = Paths.get(tgzFilename);
+    
     
     @BeforeClass public void createTgz() throws FileNotFoundException, IOException {
-        File testFileTgz = new File(tgzFilename);
-        TgzCreator.create(testFileTgz.toPath(), new File(pathToFiles).toPath());
+        
+        TgzCreator.create(testFileTgz, Paths.get(pathToFiles));
     }
     
-    @AfterClass public void deleteTgz() {
-        File testFileTgz = new File(tgzFilename);
-        testFileTgz.delete();
+    @AfterClass public void deleteTgz() throws IOException {
+        Files.delete(testFileTgz);
     }
     
     @Test
@@ -36,10 +39,10 @@ public class TgzCreatorTest {
     }
     
     private void testFileEquals(String relativePath) throws FileNotFoundException, IOException {
-        try (InputStream is = new TgzInputStream(new File(tgzFilename), relativePath)) {
+        try (InputStream is = new TgzInputStream(Paths.get(tgzFilename), relativePath)) {
             assertEquals(
                 inputStreamToIntList(is)
-                , inputStreamToIntList(new FileInputStream(new File(pathToFiles+relativePath)))
+                , inputStreamToIntList(Files.newInputStream(Paths.get(pathToFiles+relativePath)))
                 );
         }
     }
@@ -54,7 +57,7 @@ public class TgzCreatorTest {
     
     @Test
     public void testAvailable() throws FileNotFoundException, IOException {
-        try (InputStream is = new TgzInputStream(new File(tgzFilename), "Foo.txt")) {
+        try (InputStream is = new TgzInputStream(Paths.get(tgzFilename), "Foo.txt")) {
             assertEquals(is.available(), 17);
         }
     }
