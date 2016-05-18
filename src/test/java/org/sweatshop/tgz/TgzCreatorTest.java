@@ -2,7 +2,6 @@ package org.sweatshop.tgz;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -61,4 +61,9 @@ public class TgzCreatorTest {
             assertEquals(is.available(), 17);
         }
     }
+    
+    @Test public void testThatWillFail() {
+        Assert.assertTrue(false);
+    }
+
 }
