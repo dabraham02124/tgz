@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -60,10 +59,6 @@ public class TgzCreatorTest {
         try (InputStream is = new TgzInputStream(Paths.get(tgzFilename), "Foo.txt")) {
             assertEquals(is.available(), 17);
         }
-    }
-    
-    @Test public void testThatWillFail() {
-        Assert.assertTrue(false);
     }
 
 }
