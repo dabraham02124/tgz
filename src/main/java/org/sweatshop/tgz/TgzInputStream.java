@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
@@ -72,27 +71,16 @@ public class TgzInputStream extends InputStream {
         return internalPath.equalsIgnoreCase(absolutePath);
     }
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-        try (TgzInputStream tis = new TgzInputStream(
-                new File("./local/src.tgz")
-                , "src/main/java/org/sweatshop/tgz/TGZ.java")) 
-        {
-    
-            int n = tis.available();
-            byte[] bytes = new byte[n];
-            tis.read(bytes, 0, n);
-            String s = new String(bytes, StandardCharsets.UTF_8);
-            System.out.println(s);
-        }
-    }
-
-    @Override
-    public int available() {
+    @Override public int available() {
         return bais.available();
     }
     
-    @Override
-    public int read() throws IOException {
+    @Override public int read() throws IOException {
         return bais.read();
     }
+    
+    @Override public void close() throws IOException {
+        bais.close();
+    }
+
 }
