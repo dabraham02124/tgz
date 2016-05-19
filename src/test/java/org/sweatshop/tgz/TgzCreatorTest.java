@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -38,7 +39,7 @@ public class TgzCreatorTest {
     }
     
     private void testFileEquals(String relativePath) throws FileNotFoundException, IOException {
-        try (InputStream is = new TgzInputStream(Paths.get(tgzFilename), relativePath)) {
+        try (InputStream is = new TgzInputStream(testFileTgz, relativePath)) {
             assertEquals(
                 inputStreamToIntList(is)
                 , inputStreamToIntList(Files.newInputStream(Paths.get(pathToFiles+relativePath)))
@@ -56,9 +57,19 @@ public class TgzCreatorTest {
     
     @Test
     public void testAvailable() throws FileNotFoundException, IOException {
-        try (InputStream is = new TgzInputStream(Paths.get(tgzFilename), "Foo.txt")) {
+        try (InputStream is = new TgzInputStream(testFileTgz, "Foo.txt")) {
             assertEquals(is.available(), 17);
         }
+    }
+    
+    @Test(expectedExceptions=FileNotFoundException.class)
+    public void testCantFindInternalFile() throws FileNotFoundException, IOException {
+        System.out.println(new TgzInputStream(testFileTgz, "does-not-exist"));
+    }
+
+    @Test(expectedExceptions=NoSuchFileException.class)
+    public void testCantTgzFile() throws FileNotFoundException, IOException {
+        System.out.println(new TgzInputStream(Paths.get("does-not-exist"), "does-not-exist"));
     }
 
 }
