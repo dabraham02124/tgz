@@ -72,4 +72,8 @@ public class TgzCreatorTest {
         System.out.println(new TgzInputStream(Paths.get("does-not-exist"), "does-not-exist"));
     }
 
+    @Test
+    public void fail() {
+        throw new RuntimeException();
+    }
 }
