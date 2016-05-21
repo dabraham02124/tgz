@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -24,8 +25,17 @@ import lombok.Value;
 public class TgzInputStream extends InputStream {
     @Getter(AccessLevel.NONE) ByteArrayInputStream bais;
     
+    /**
+     * Takes a path to the tgz file, then a path within the tgz, then returns an InputStream of the contents of that file.
+     * 
+     * @param tgzPath the path to the tgz file
+     * @param internalPath the relative path within the tgz file
+     * @throws FileNotFoundException if the tgz file doesn't exist
+     * @throws NoSuchFileException if the path within the tgz does not exist
+     * @throws IOException lots of possible reasons
+     */
     public TgzInputStream(Path tgzPath, String internalPath) 
-            throws FileNotFoundException, IOException 
+            throws FileNotFoundException, NoSuchFileException, IOException 
     {
         super();
         Optional<ByteArrayInputStream> ois = getInputStream(tgzPath, internalPath);
@@ -37,7 +47,7 @@ public class TgzInputStream extends InputStream {
     }
     
     private static Optional<ByteArrayInputStream> getInputStream(Path tgzPath, String internalPath) 
-            throws FileNotFoundException, IOException 
+            throws FileNotFoundException, NoSuchFileException, IOException 
     {
         try (   InputStream fis = Files.newInputStream(tgzPath);
                 GZIPInputStream gis = new GZIPInputStream(fis);
