@@ -4,7 +4,7 @@
   <groupId>org.sweatshop</groupId>
   <artifactId>Tgz</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-rc2</version>
+  <version>1.0.0-rc3</version>
   <name>Tests</name>
   <url>http://maven.apache.org</url>
   <description>A simple package to read and write tgz files</description>
@@ -93,6 +93,22 @@
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <format>xml</format>
+          <maxmem>256m</maxmem>
+          <!-- aggregated reports for multi-module projects -->
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>4.1.0</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -108,7 +124,7 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.12.4</version>
-    	<scope>provided</scope>
+        <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>

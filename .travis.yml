@@ -3,3 +3,5 @@ install: echo skip
 script: mvn clean test
 jdk:
   - oraclejdk8
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report
