@@ -4,7 +4,7 @@
   <groupId>org.sweatshop</groupId>
   <artifactId>Tgz</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-rc1</version>
+  <version>1.0.0-rc2</version>
   <name>Tests</name>
   <url>http://maven.apache.org</url>
   <description>A simple package to read and write tgz files</description>
